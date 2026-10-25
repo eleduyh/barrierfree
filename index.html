@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>우리 반 배리어프리 앱 시제품</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDEBF7; --ink:#1F1E2E; --line:#2A2A2A; --paper:#FFFFFF; --muted:#6B6880;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#1C1B29; --muted:#B9B6CF; } }
+:root[data-theme="dark"]{ --bg:#1C1B29; --muted:#B9B6CF; }
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%}
+body{margin:0; height:100%; background:var(--bg); color:var(--ink);
+  font-family:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  -webkit-tap-highlight-color:transparent; overflow:hidden}
+button{font:inherit; color:inherit; cursor:pointer; touch-action:manipulation}
+.h{font-family:"Jua","Gowun Dodum","Apple SD Gothic Neo",sans-serif; font-weight:400}
+
+/* 기기 틀 */
+.device{position:relative; height:100%; max-width:760px; margin:0 auto; background:var(--paper); overflow:hidden;
+  box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.screen{position:absolute; inset:0; display:none; flex-direction:column; overflow-y:auto}
+.screen.on{display:flex}
+
+/* 교사용 모둠 선택 */
+#launcher{background:var(--bg); align-items:center; justify-content:center; gap:18px; padding:24px; text-align:center}
+#launcher h1{font-size:30px; margin:0; color:var(--ink)}
+#launcher p{margin:0 0 8px; color:var(--muted); line-height:1.6}
+.pick{width:min(440px,100%); padding:22px; border-radius:20px; border:3px solid var(--line); background:#fff; color:#1F1E2E; font-size:24px}
+.pick small{display:block; font-family:"Gowun Dodum",sans-serif; font-size:15px; color:#6B6880; margin-top:4px}
+.corner{position:absolute; bottom:8px; left:8px; z-index:50; width:34px; height:34px; border-radius:50%; border:none;
+  background:rgba(0,0,0,.06); color:#777; font-size:18px; line-height:34px; padding:0}
+
+/* 공통 알림 */
+.toast{position:absolute; left:50%; bottom:28px; transform:translateX(-50%); background:#1F1E2E; color:#fff; padding:12px 20px;
+  border-radius:14px; font-size:17px; z-index:60; max-width:88%; text-align:center; opacity:0; pointer-events:none; transition:opacity .2s}
+.toast.on{opacity:1}
+.overlay{position:absolute; inset:0; background:rgba(20,18,40,.55); display:none; align-items:center; justify-content:center; z-index:70}
+.overlay.on{display:flex}
+.listen{background:#fff; border-radius:24px; padding:30px 34px; text-align:center; width:min(340px,86%)}
+.listen .mic{width:84px; height:84px; margin:0 auto 14px; border-radius:50%; background:#EDEBF7; display:grid; place-items:center; animation:pulse 1.2s infinite}
+.listen p{margin:0; font-size:20px}
+.listen small{display:block; margin-top:8px; color:#6B6880; font-size:14px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion: reduce){.listen .mic{animation:none}}
+
+/* ===== 모둠 1: 내 손안에 무릉도곡 ===== */
+.g1{background:#fff}
+.g1 .s1{flex:1; display:flex; flex-direction:column; align-items:center; padding:60px 24px 40px}
+.g1 .title-box{border:3px solid var(--line); padding:26px 22px; width:min(560px,92%); text-align:center; font-size:clamp(30px,6vw,46px); border-radius:4px}
+.g1 .start{margin-top:auto; border:3px solid var(--line); background:#fff; border-radius:999px; padding:18px 54px; font-size:28px}
+.g1 .notice{padding:44px 30px; font-size:22px; line-height:1.7}
+.g1 .pill{display:inline-block; border:3px solid var(--line); border-radius:999px; padding:6px 26px; font-size:28px; margin-bottom:18px}
+.g1 .rule{display:flex; gap:12px; margin:10px 0}
+.g1 .rule b{font-family:"Jua",sans-serif; font-weight:400; font-size:26px; min-width:28px}
+.g1 .yn{display:flex; align-items:center; gap:10px; margin:20px 0 0 40px}
+.g1 .yn .seg{display:flex; border:3px solid var(--line); border-radius:999px; overflow:hidden}
+.g1 .yn .seg button{border:none; background:#fff; padding:10px 24px; font-size:22px}
+.g1 .yn .seg button+button{border-left:3px solid var(--line)}
+.g1 .micbtn{border:none; background:none; padding:4px}
+.g1 .top{display:flex; align-items:center; gap:10px; padding:18px 16px 6px}
+.g1 .icon{border:none; background:none; padding:6px}
+.g1 .search{flex:1; border:3px solid var(--line); border-radius:999px; padding:10px 18px; font:inherit; font-size:19px; min-width:0}
+.g1 .miclabel{display:flex; flex-direction:column; align-items:center; font-size:12px; border:none; background:none}
+.g1 .grid{margin:14px 16px 0; border:3px solid var(--line); border-radius:16px; display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden}
+.g1 .grid button{border:none; border-right:2px solid var(--line); border-bottom:2px solid var(--line); background:#fff; padding:16px 4px; font-size:16px; word-break:keep-all}
+.g1 .grid button:nth-child(4n){border-right:none}
+.g1 .grid button:nth-last-child(-n+4){border-bottom:none}
+.g1 .more{align-self:flex-end; margin:4px 18px 0; font-size:13px; border:none; background:none; color:#444}
+.g1 .shelf{margin:12px 16px 0; border:3px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; align-items:center; gap:14px}
+.g1 .shelf span{font-size:20px; min-width:110px}
+.g1 .covers{display:flex; gap:14px; flex:1; justify-content:flex-end}
+.g1 .cover{width:62px; height:80px; border:3px solid var(--line); border-radius:4px 10px 10px 4px; background:#fff}
+.g1 .s3{padding-bottom:30px}
+
+/* ===== 모둠 2: 도우미 지도 ===== */
+.g2{background:#fff}
+.g2 .bar{background:#F8E7A6; border-bottom:3px solid var(--line); padding:30px 16px; text-align:center; font-size:clamp(36px,8vw,58px); letter-spacing:.12em}
+.g2 .center{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; padding:20px}
+.g2 .obtn{background:#F2A25B; border:3px solid var(--line); padding:18px 46px; font-size:clamp(30px,6vw,44px)}
+.g2 .buddy{position:absolute; left:8%; bottom:6%; display:flex; align-items:flex-end; gap:0}
+.g2 .bubble{border:2px solid var(--line); border-radius:999px; padding:4px 12px; font-size:15px; background:#fff; margin-bottom:96px; margin-left:-6px}
+.g2 .back{position:absolute; right:6%; bottom:6%; background:#F8E7A6; border:3px solid var(--line); padding:8px 16px; font-size:20px}
+.g2 .map{position:relative; flex:1; min-height:520px; background:#FBF3CF}
+.g2 .map > svg{position:absolute; inset:0; width:100%; height:100%}
+.g2 .panel{position:absolute; left:4%; top:4%; width:36%; height:46%; background:#F6DA86; border:3px solid var(--line); border-radius:18px; padding:10px; display:flex; flex-direction:column; gap:8px}
+.g2 .panel input{width:100%; border:2px solid var(--line); border-radius:10px; background:#F2C75C; padding:8px 10px; font:inherit; font-size:17px}
+.g2 .panel .lines{flex:1; background:repeating-linear-gradient(#F6DA86 0 22px,#B08A2C 22px 24px); opacity:.35; border-radius:6px}
+.g2 .side{position:absolute; right:3%; top:4%; display:flex; flex-direction:column; gap:10px; align-items:flex-end}
+.g2 .side button,.g2 .low button{border:3px solid var(--line); border-radius:10px; padding:8px 14px; font-size:18px; color:#1F1E2E}
+.g2 .blue{background:#8FC3EE}.g2 .red{background:#E2595A}.g2 .orange{background:#F2A25B}.g2 .gray{background:#DADADA}
+.g2 .low{position:absolute; right:3%; bottom:4%; display:flex; flex-direction:column; gap:10px; align-items:flex-end}
+.g2 .home{border:none!important; background:none!important; display:flex; align-items:center; gap:6px; font-size:15px!important; padding:2px!important}
+.g2 .bus{background:#F7B788; border-radius:16px 16px 16px 4px!important}
+.g2 .pin{position:absolute; transform:translate(-50%,-100%); font-size:26px; display:none; filter:drop-shadow(0 2px 1px rgba(0,0,0,.25))}
+.g2 .pin.on{display:block}
+.g2 .end{flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; font-size:22px; padding:30px; text-align:center}
+.g2 .end button{border:3px solid var(--line); background:#fff; border-radius:12px; padding:10px 20px; font-size:18px}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+
+  <!-- 모둠 선택 (선생님용) -->
+  <section class="screen on" id="launcher">
+    <h1 class="h">우리 반 앱 시제품</h1>
+    <p>시연할 모둠의 앱을 골라 주세요.<br>앱 안에서는 오른쪽 위 ⋯ 버튼으로 이 화면에 돌아올 수 있어요.</p>
+    <button class="pick h" data-go="g1s1">내 손안에 무릉도곡<small>도서관 책 찾기 앱</small></button>
+    <button class="pick h" data-go="g2s1">도우미 지도<small>경사로·엘리베이터 찾기 앱</small></button>
+  </section>
+
+  <!-- ===== 모둠 1 ===== -->
+  <section class="screen g1" id="g1s1">
+    <div class="s1">
+      <div class="title-box h">내 손안에 무릉도곡</div>
+      <button class="start h" data-go="g1s2">시작하기</button>
+    </div>
+  </section>
+
+  <section class="screen g1" id="g1s2">
+    <div class="notice">
+      <div class="pill h">안내 사항</div>
+      <div class="rule"><b>1.</b><span>욕설이나 검색창에 욕 쓰기 금지</span></div>
+      <div class="rule"><b>2.</b><span>음성인식이 필요한 경우 음성인식을 할 수 있습니다. 음성인식을 하겠습니까?</span></div>
+      <div class="yn">
+        <div class="seg"><button id="g1yes">네</button><button data-go="g1s3">아니요</button></div>
+        <button class="micbtn" id="g1mic2" aria-label="마이크"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="#2A2A2A" stroke-width="2.6" stroke-linecap="round"><rect x="16" y="6" width="12" height="20" rx="6"/><path d="M11 21a11 11 0 0 0 22 0M22 32v6M15 38h14"/><path d="M6 16q-3 6 0 12M38 16q3 6 0 12"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen g1" id="g1s3">
+    <div class="s3">
+      <div class="top">
+        <button class="icon" data-go="g1s1" aria-label="홈"><svg width="34" height="40" viewBox="0 0 34 40" fill="none" stroke="#2A2A2A" stroke-width="2.6" stroke-linejoin="round"><path d="M17 3 4 18h8v18h10V18h8z"/></svg></button>
+        <input class="search" id="g1search" placeholder="검색" enterkeyhint="search">
+        <button class="miclabel" id="g1mic3"><svg width="30" height="40" viewBox="0 0 30 40" fill="none" stroke="#2A2A2A" stroke-width="2.4" stroke-linecap="round"><ellipse cx="15" cy="11" rx="7" ry="9"/><path d="M15 20v12M7 34h16"/></svg>마이크</button>
+      </div>
+      <div class="grid" id="g1grid"></div>
+      <button class="more" id="g1more">더 살펴보기</button>
+      <div class="shelf"><span>새로 들어온 책</span><div class="covers"><button class="cover" aria-label="책"></button><button class="cover" aria-label="책"></button><button class="cover" aria-label="책"></button></div></div>
+      <div class="shelf"><span>베스트 3</span><div class="covers"><button class="cover" aria-label="책"></button><button class="cover" aria-label="책"></button><button class="cover" aria-label="책"></button></div></div>
+    </div>
+  </section>
+
+  <!-- ===== 모둠 2 ===== -->
+  <section class="screen g2" id="g2s1">
+    <div class="bar h">도우미 지도</div>
+    <div class="center">
+      <button class="obtn h" data-go="g2s2">시작하기</button>
+      <div class="buddy" aria-hidden="true">
+        <svg width="110" height="130" viewBox="0 0 110 130" fill="none" stroke="#555" stroke-width="2.2" stroke-linecap="round"><path d="M44 18l-4-12M54 16v-12M64 18l4-12"/><ellipse cx="55" cy="46" rx="30" ry="28" fill="#fff"/><ellipse cx="44" cy="42" rx="9" ry="11" fill="#fff"/><ellipse cx="66" cy="42" rx="9" ry="11" fill="#fff"/><circle cx="46" cy="44" r="4" fill="#333" stroke="none"/><circle cx="64" cy="44" r="4" fill="#333" stroke="none"/><path d="M46 60q9 6 18 0"/><path d="M28 54q-22-2-20 16q10 4 24-4M82 54q22-2 20 16q-10 4-24-4"/><path d="M38 72q-14 20-8 40q8 4 18-10q7 18 14 0q10 14 18 10q6-20-8-40" fill="#fff"/></svg>
+        <span class="bubble">만나서 반가워!</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen g2" id="g2s2">
+    <div class="map" id="g2map">
+      <svg viewBox="0 0 400 520" preserveAspectRatio="none" aria-hidden="true">
+        <g stroke="#9A9A9A" stroke-width="26" fill="none" stroke-linecap="round">
+          <path d="M150 0 L170 140 L240 300 L300 520"/>
+          <path d="M60 330 L220 300 L400 190"/>
+          <path d="M0 470 L120 410 L160 520"/>
+          <path d="M230 0 L260 120 L400 120"/>
+        </g>
+        <g stroke="#C9C9C9" stroke-width="10" fill="none">
+          <path d="M150 0 L170 140 L240 300 L300 520"/>
+          <path d="M60 330 L220 300 L400 190"/>
+        </g>
+      </svg>
+      <div style="position:absolute;left:52%;top:20%;font-size:15px">◎ 식당</div>
+      <div style="position:absolute;left:56%;top:53%;font-size:15px">◎ 병원</div>
+      <div style="position:absolute;left:38%;top:78%;font-size:15px">◎ 학교</div>
+      <div style="position:absolute;left:58%;top:81%;font-size:15px">◎ 학원</div>
+
+      <span class="pin ramp" style="left:30%;top:58%">♿</span>
+      <span class="pin ramp" style="left:66%;top:30%">♿</span>
+      <span class="pin ramp" style="left:47%;top:90%">♿</span>
+      <span class="pin elev" style="left:60%;top:50%">🛗</span>
+      <span class="pin elev" style="left:44%;top:74%">🛗</span>
+      <span class="pin bus" style="left:72%;top:40%">🚌</span>
+      <span class="pin bus" style="left:24%;top:68%">🚌</span>
+
+      <div class="panel">
+        <input id="g2search" placeholder="검색" enterkeyhint="search">
+        <div class="lines"></div>
+      </div>
+      <div class="side">
+        <button class="blue" id="g2ramp">경사로 찾기</button>
+        <button class="red" id="g2elev">엘리베이터 찾기</button>
+        <button class="orange" id="g2etc">기타</button>
+      </div>
+      <div class="low">
+        <button class="home" data-go="g2s1">홈으로 가기 <svg width="28" height="28" viewBox="0 0 28 28" fill="#555"><path d="M14 3 3 13h3v12h6v-7h4v7h6V13h3z"/></svg></button>
+        <button class="bus" id="g2bus">대중교통 찾기</button>
+        <button class="gray" data-go="g2s3">끝내기</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen g2" id="g2s3">
+    <div class="bar h">도우미 지도</div>
+    <div class="center">
+      <button class="obtn h" data-go="g2end">끝내기</button>
+      <div class="buddy" aria-hidden="true">
+        <svg width="110" height="130" viewBox="0 0 110 130" fill="none" stroke="#555" stroke-width="2.2" stroke-linecap="round"><path d="M44 18l-4-12M54 16v-12M64 18l4-12"/><ellipse cx="55" cy="46" rx="30" ry="28" fill="#fff"/><ellipse cx="44" cy="42" rx="9" ry="11" fill="#fff"/><ellipse cx="66" cy="42" rx="9" ry="11" fill="#fff"/><circle cx="46" cy="44" r="4" fill="#333" stroke="none"/><circle cx="64" cy="44" r="4" fill="#333" stroke="none"/><path d="M46 60q9 6 18 0"/><path d="M28 54q-22-12-22 6q10 6 24-2M82 54q22-12 22 6q-10 6-24-2"/><path d="M38 72q-14 20-8 40q8 4 18-10q7 18 14 0q10 14 18 10q6-20-8-40" fill="#fff"/></svg>
+        <span class="bubble">다음에 와!</span>
+      </div>
+      <button class="back h" data-go="g2s2">되돌아가기</button>
+    </div>
+  </section>
+
+  <section class="screen g2" id="g2end">
+    <div class="end">
+      <div>앱을 종료했어요.</div>
+      <button data-go="g2s1">다시 열기</button>
+    </div>
+  </section>
+
+  <button class="corner" id="corner" aria-label="모둠 선택으로" hidden>⋯</button>
+  <div class="toast" id="toast" role="status"></div>
+  <div class="overlay" id="listen" role="dialog" aria-label="음성 인식">
+    <div class="listen">
+      <div class="mic"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="#5B4BD6" stroke-width="3" stroke-linecap="round"><rect x="16" y="6" width="12" height="20" rx="6"/><path d="M11 21a11 11 0 0 0 22 0M22 32v6M15 38h14"/></svg></div>
+      <p id="listenText">듣고 있어요…</p>
+      <small>시제품이라 실제로 듣지는 않아요</small>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const corner = $('#corner');
+function go(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  corner.hidden = (id === 'launcher');
+  document.querySelectorAll('.pin').forEach(p => p.classList.remove('on'));
+  const t = document.getElementById(id); if(t) t.scrollTop = 0;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-go]');
+  if(b) go(b.dataset.go);
+});
+corner.onclick = () => go('launcher');
+
+let tt;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2200);
+}
+function listen(done){
+  const o = $('#listen'), txt = $('#listenText');
+  txt.textContent = '듣고 있어요…'; o.classList.add('on');
+  setTimeout(() => { txt.textContent = '말씀을 알아들었어요!'; }, 1800);
+  setTimeout(() => { o.classList.remove('on'); done && done(); }, 2800);
+}
+$('#listen').onclick = () => $('#listen').classList.remove('on');
+
+/* 모둠 1 */
+['백과사전','철학','종교','사회과학','자연과학','기술과학','예술','문학','언어','역사','그림책','위인전'].forEach(n => {
+  const b = document.createElement('button'); b.textContent = n;
+  b.onclick = () => toast(`‘${n}’ 책을 찾고 있어요`);
+  $('#g1grid').appendChild(b);
+});
+$('#g1yes').onclick = () => listen(() => go('g1s3'));
+$('#g1mic2').onclick = () => listen(() => go('g1s3'));
+$('#g1mic3').onclick = () => listen(() => toast('말씀하신 책을 찾고 있어요'));
+$('#g1more').onclick = () => toast('더 많은 분야를 보여 줄 거예요');
+$('#g1search').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !e.isComposing){ const v = e.target.value.trim(); toast(v ? `‘${v}’ 책을 찾고 있어요` : '찾을 책 이름을 적어 주세요'); e.target.blur(); }
+});
+document.querySelectorAll('.g1 .cover').forEach(c => c.onclick = () => toast('책을 골랐어요'));
+
+/* 모둠 2 */
+function showPins(cls, msg){
+  document.querySelectorAll('.pin').forEach(p => p.classList.toggle('on', p.classList.contains(cls)));
+  toast(msg);
+}
+$('#g2ramp').onclick = () => showPins('ramp', '가까운 경사로를 지도에 표시했어요');
+$('#g2elev').onclick = () => showPins('elev', '가까운 엘리베이터를 지도에 표시했어요');
+$('#g2bus').onclick = () => showPins('bus', '가까운 대중교통을 지도에 표시했어요');
+$('#g2etc').onclick = () => toast('다른 편의시설을 찾을 수 있어요');
+$('#g2search').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !e.isComposing){ const v = e.target.value.trim(); toast(v ? `‘${v}’을(를) 찾고 있어요` : '찾을 곳을 적어 주세요'); e.target.blur(); }
+});
+</script>
+</body>
+</html>
